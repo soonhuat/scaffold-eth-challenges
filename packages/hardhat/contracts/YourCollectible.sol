@@ -16,6 +16,7 @@ contract YourCollectible is
     using Counters for Counters.Counter;
 
     Counters.Counter private _tokenIdCounter;
+    mapping(uint256 => uint) public price;
 
     constructor() ERC721("YourCollectible", "YCB") {}
 
@@ -26,6 +27,7 @@ contract YourCollectible is
     function mintItem(address to, string memory uri) public returns (uint256) {
         _tokenIdCounter.increment();
         uint256 tokenId = _tokenIdCounter.current();
+        price[tokenId] = random();
         _safeMint(to, tokenId);
         _setTokenURI(tokenId, uri);
         return tokenId;
@@ -65,4 +67,9 @@ contract YourCollectible is
     {
         return super.supportsInterface(interfaceId);
     }
+
+    function random() private view returns(uint){
+      return uint(keccak256(abi.encodePacked(block.timestamp, block.difficulty, msg.sender))) % 1 ether;
+    }
+
 }
